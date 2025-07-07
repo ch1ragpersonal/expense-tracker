@@ -8,3 +8,4 @@
 .mypy_cache
 .coverage
 .coverage.*
+__pycache__

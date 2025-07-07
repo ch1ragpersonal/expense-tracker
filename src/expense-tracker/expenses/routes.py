@@ -4,6 +4,7 @@ from database import get_collection
 from utils.jwt import get_current_user
 from datetime import datetime, timezone
 from bson import ObjectId
+from typing import List
 
 router = APIRouter(prefix="/expenses", tags=["Expenses"])
 
@@ -41,3 +42,24 @@ async def create_expense(expense: ExpenseCreate, user_id: str = Depends(get_curr
         created_at=now,
         updated_at=now
     )
+
+@router.get("/", response_model=List[ExpenseResponse])
+async def get_expenses(user_id: str = Depends(get_current_user)):
+    expenses_collection = get_collection("expenses")
+    
+    cursor = expenses_collection.find({"user_id": user_id})
+    expenses = []
+
+    async for doc in cursor:
+        expenses.append(ExpenseResponse(
+            id=str(doc["_id"]),
+            user_id=doc["user_id"],
+            title=doc["title"],
+            amount=doc["amount"],
+            date=doc["date"],
+            category=doc["category"],
+            created_at=doc["created_at"],
+            updated_at=doc["updated_at"]
+        ))
+    
+    return expenses
