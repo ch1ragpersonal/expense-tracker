@@ -1,12 +1,26 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from ..utils.database import Base
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+from datetime import datetime
 
-class User(Base):
-    __tablename__ = "users"
+class UserBase(BaseModel):
+    name: str
+    username: str
+    email: EmailStr
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+class UserCreate(UserBase):
+    password: str
 
-    expenses = relationship("Expense", back_populates="owner") 
+class UserResponse(UserBase):
+    id: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
+class UserLogin(BaseModel):
+    login: str
+    password: str
+
+class User(UserBase):
+    id: str
