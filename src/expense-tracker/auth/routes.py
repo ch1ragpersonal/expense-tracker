@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from models.user import UserCreate, UserResponse, UserLogin
 from utils.crypto import hash_password, verify_password
-from database import get_user_collection
+from database import get_collection
 from datetime import datetime
 from bson import ObjectId
 from utils.jwt import create_access_token
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def signup(user: UserCreate):
-    user_collection = get_user_collection()
+    user_collection = get_collection("users")
     existing_user = await user_collection.find_one({
         "$or": [
             {"email": user.email},
@@ -47,7 +47,7 @@ async def signup(user: UserCreate):
 
 @router.post("/login")
 async def login(user: UserLogin):
-    user_collection = get_user_collection()
+    user_collection = get_collection("users")
     existing_user = await user_collection.find_one({
         "$or": [
             {"email": user.login},

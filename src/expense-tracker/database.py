@@ -14,5 +14,3 @@ db = client.expense_tracker
 def get_collection(collection_name: str):
     return db[collection_name]
 
-def get_user_collection():
-    return db["users"]

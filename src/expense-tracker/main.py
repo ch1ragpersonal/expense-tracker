@@ -3,12 +3,14 @@ from dotenv import load_dotenv
 import os
 import uvicorn
 from auth.routes import router as auth_router
+from expenses.routes import router as expenses_router
 
 load_dotenv(dotenv_path="../../.env")
 
 app = FastAPI(title="Expense Tracker", description="A simple expense tracker")
 
 app.include_router(auth_router)
+app.include_router(expenses_router)
 
 @app.get("/")
 async def root():
